@@ -30,7 +30,9 @@ def load_librtlsdr():
     driver_files += ['rtlsdr.dll', 'librtlsdr.so', 'librtlsdr.dylib']
     driver_files += ['..//rtlsdr.dll', '..//librtlsdr.so']
     driver_files += ['rtlsdr//rtlsdr.dll', 'rtlsdr//librtlsdr.so']
-    driver_files += [lambda : find_library('rtlsdr'), lambda : find_library('librtlsdr')]
+    # ANDROID CHANGES: temporaty commented due to error during importing find_library in Android
+    # TODO investigate the issue with import the method or add "if Android" condition
+    #driver_files += [lambda : find_library('rtlsdr'), lambda : find_library('librtlsdr')]
     dll = None
 
     for driver in driver_files:
@@ -81,6 +83,12 @@ f.restype, f.argtypes = c_int, [c_char_p]
 
 # int rtlsdr_open(rtlsdr_dev_t **dev, uint32_t index);
 f = librtlsdr.rtlsdr_open
+f.restype, f.argtypes = c_int, [POINTER(p_rtlsdr_dev), c_uint]
+
+# ANDROID CHANGES: Added import of the method since rtlsdr_open doesn't work on Android
+# TODO: Add "If Android" condition
+# int rtlsdr_open_fd(rtlsdr_dev_t **dev, uint32_t fd);
+f = librtlsdr.rtlsdr_open_fd
 f.restype, f.argtypes = c_int, [POINTER(p_rtlsdr_dev), c_uint]
 
 # int rtlsdr_close(rtlsdr_dev_t *dev);

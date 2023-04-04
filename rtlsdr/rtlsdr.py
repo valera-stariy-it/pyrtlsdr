@@ -166,7 +166,9 @@ class BaseRtlSdr(object):
         self.dev_p = p_rtlsdr_dev(None)
 
         # initialize device
-        result = librtlsdr.rtlsdr_open(self.dev_p, device_index)
+        # ANDROID CHANGES: rtlsdr_open method is changed to rtlsdr_open_fd since only this one works on Android
+        # TODO: add "if Android" condition
+        result = librtlsdr.rtlsdr_open_fd(self.dev_p, device_index)
         if result < 0:
             raise LibUSBError(result, 'Could not open SDR (device index = %d)' % (device_index))
 
